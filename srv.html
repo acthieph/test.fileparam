@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>script</title>
+  <script src="jquery.js"></script>
+  <style>
+
+  div.fileuploader {
+    width: 150px;
+    height: 50px;
+    position: relative;
+    border: 1px solid #DDD;
+  }
+
+  input[type='file'] {
+    opacity: 0;
+    width: 100% ;
+    height: 100% ;
+    position: absolute;
+  }
+
+  input[type='file'] + label {
+    display: inline-block;
+    position: absolute;
+    width: 100%;
+    line-height: 50px;
+    text-align: center;
+  }
+
+  </style>
+
+</head>
+<body>
+  <div id="result">
+    <div class="fileuploader">
+      <input type="file" id="fileInput" multiple>
+      <label for="fileInput">Open</label>
+    </div>
+  </div>
+
+  <script>
+    var fileInput = document.getElementById('fileInput') ;
+    fileInput.addEventListener('change', onFileChange, false) ;
+
+    function onFileChange(evt) {
+      var timeStamp = evt.timeStamp ;
+      var files = evt.target.files;
+      var num = files.length ;
+      var fileData = {} ;
+
+      if(num<1)
+        return ;
+
+      for (var i=0; i<num; i++) {
+        var key = files[i].size + '_' + timeStamp ;
+        fileData[key] = {
+          name: files[i].name,
+          size: files[i].size,
+          type: files[i].type
+        };
+      };
+
+      postData(fileData, 'rcvparam.php', 'POST') ;
+    }
+
+
+    function postData(data, url, method) {
+      jQuery.ajax({
+        url: url,
+        type: method,
+        data: data,
+        dataType: 'text',
+        context: $('#result'),
+
+        success: function(response) {
+          console.log(response) ;
+          $(this).append($('<p>')).html(response) ;
+        }
+      }) ;
+    }
+
+    </script>
+
+</body>
+</html>
